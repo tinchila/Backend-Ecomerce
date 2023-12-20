@@ -1,70 +1,74 @@
 import passport from "passport";
 import local from 'passport-local';
-import User from '../dao/dbManagers/users.js';
-import { createHast, isValidatePassword } from "../utils.js";
-import { disconnect } from "mongoose";
+import User from '../models/User.js';
+import { createHash, validatePassword } from "../utils.js";
 
-const LocalStrategy = local.Strategy
-const userService = new User();
+const LocalStrategy = local.Strategy;
 
-const initializePassport = async() => {
+const initializePassport = async () => {
+    passport.use('register', new LocalStrategy({
+        passReqToCallback: true,
+        usernameField: 'email',
+        session: false
+    }, async (req, email, password, done) => {
+        try {
+            const { first_name, last_name, age } = req.body;
 
-    passport.use('register', new LocalStrategy({ passReqToCallback : true ,
-                                                usernameField: 'email' , 
-                                                session : false}, async(req, email, password, done) => {
+            if (!first_name || !last_name || !age)
+                return done(null, false);
 
-                                                    try{
-                                                        const { first_name, last_name, birthDate, gender, dni } = req.body
+            const exist = await User.findOne({ email });
+            if (exist)
+                return done(null, false);
 
-                                                        if (!first_name || !last_name || !birthDate || !gender || !dni)
-                                                        return done( null, false, { message: 'Incomplete Values'})
-                                                        const exist = await userService.getById({email:email})
-                                                        if(exist)
-                                                        return done (null, false, { message: 'User email already exists'})
+            const hashedPassword = await createHash(password);
 
-                                                        const hastPassword = await createHast(password)
+            const newUser = new User({
+                first_name,
+                last_name,
+                email,
+                age,
+                password: hashedPassword,
+                role: 'user'
+            });
 
-                                                        const newUser = {
-                                                            first_name,
-                                                            last_name,
-                                                            email,
-                                                            birthDate,
-                                                            gender,
-                                                            dni,
-                                                            password: hastPassword
-                                                        }
-                                                        let result = await userService.saveUser(newUser)
-                                                        return done(null, result)
+            await newUser.save();
+            return done(null, newUser);
 
-                                                    }
-                                                    catch(error){done(error)}
-                                                }
-                                                ))
+        } catch (error) {
+            done(error);
+        }
+    }));
 
+    passport.use('login', new LocalStrategy({
+        passReqToCallback: true,
+        usernameField: 'email',
+        session: false
+    }, async (req, email, password, done) => {
+        try {
+            const user = await User.findOne({ email });
+            if (!user || !(await validatePassword(user, password)))
+                return done(null, false);
 
-    passport.use ('login', new LocalStrategy({passReqToCallback : true,
-                                            usernameField: 'email',
-                                            session: false}, async( email, password, done) =>{
-                                                try{
-                                                    const user = await userService.getById({email})
-                                                    const validatePassword = await isValidatePassword(user, password)
-                                                    if(!validatePassword)
-                                                        return done(null, false)
-                                                    return done(null, user)
-                                                }
-                                                catch(error){done(error)}                                               
-                                            }
-                                            ))                                           
+            return done(null, user);
+
+        } catch (error) {
+            done(error);
+        }
+    }));
 
     passport.serializeUser((user, done) => {
-        done(null, user._id)
-    })                   
-    
-    passport.deserializeUser(async (id,done) => {
-        let result = await userService.getById({_id:id})
-        return done(null, result)
-    })
-    
-}
+        done(null, user.id);
+    });
 
-export default initializePassport
+    passport.deserializeUser(async (id, done) => {
+        try {
+            const user = await User.findById(id);
+            done(null, user);
+        } catch (error) {
+            done(error);
+        }
+    });
+};
+
+export default initializePassport;

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js'; // Importa el modelo User adecuadamente
+import { userModel } from '../dao/models/users.js';
 
 const router = Router();
 
@@ -43,7 +43,7 @@ router.get('/current', async (req, res) => {
         }
 
         try {
-            const user = await User.findById(decoded.id);
+            const user = await userModel.findById(decoded.id);
             if (!user) {
                 return res.status(404).json({ status: 'error', message: 'User not found' });
             }

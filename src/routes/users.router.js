@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import Courses from '../dao/dbManagers/cart.js';
-import User from '../models/User.js';
+import { userModel } from '../dao/models/users.js';
 import { createHash } from '../utils.js';
 
 const router = Router();
@@ -20,7 +20,7 @@ router.post('/register', async (req, res) => {
 
         const hashedPassword = await createHash(password);
 
-        const newUser = new User({
+        const newUser = new userModel({
             first_name,
             last_name,
             email,

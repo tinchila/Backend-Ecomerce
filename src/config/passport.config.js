@@ -1,6 +1,6 @@
 import passport from "passport";
 import local from 'passport-local';
-import User from '../models/User.js';
+import { userModel } from '../dao/models/users.js';
 import { createHash, validatePassword } from "../utils.js";
 
 const LocalStrategy = local.Strategy;
@@ -17,13 +17,13 @@ const initializePassport = async () => {
             if (!first_name || !last_name || !age)
                 return done(null, false);
 
-            const exist = await User.findOne({ email });
+            const exist = await userModel.findOne({ email });
             if (exist)
                 return done(null, false);
 
             const hashedPassword = await createHash(password);
 
-            const newUser = new User({
+            const newUser = new userModel({
                 first_name,
                 last_name,
                 email,
@@ -46,7 +46,7 @@ const initializePassport = async () => {
         session: false
     }, async (req, email, password, done) => {
         try {
-            const user = await User.findOne({ email });
+            const user = await userModel.findOne({ email });
             if (!user || !(await validatePassword(user, password)))
                 return done(null, false);
 
@@ -63,7 +63,7 @@ const initializePassport = async () => {
 
     passport.deserializeUser(async (id, done) => {
         try {
-            const user = await User.findById(id);
+            const user = await userModel.findById(id);
             done(null, user);
         } catch (error) {
             done(error);

@@ -2,7 +2,7 @@ import express  from "express";
 import __dirname from "./utils.js";
 import passport from "passport";
 import viewRouter from './routes/views.router.js'
-import coursesRouter from './routes/courses.router.js'
+import cartRouter from './routes/cart.router.js'
 import usersRouter from './routes/users.router.js'
 import handlebars from 'express-handlebars'
 import sessionRouter from './routes/session.router.js'
@@ -27,7 +27,7 @@ initializePassport();
 app.use(passport.initialize())
 app.use(cookieParser())
 app.use('/', viewRouter)
-app.use('/api/courses', coursesRouter)
+app.use('/api/cart', cartRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/sessions', sessionRouter)
 

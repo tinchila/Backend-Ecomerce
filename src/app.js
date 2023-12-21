@@ -14,7 +14,7 @@ const app =express();
 const PORT=8080;
 
 mongoose.set('strictQuery',false)
-const connection= mongoose.connect('mongodb+srv://martindotto:hola123456@cluster0.oz3qdxp.mongodb.net/SegundaPractica?retryWrites=true&w=majority');
+const connection= mongoose.connect('mongodb+srv://tinchila:martindotto@cluster0.oz3qdxp.mongodb.net/admin');
 
 app.engine('handlebars',handlebars.engine());
 app.set('views',__dirname+'/views')

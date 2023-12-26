@@ -1,3 +1,5 @@
+// session.router.js
+
 import { Router } from "express";
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
@@ -47,6 +49,7 @@ router.get('/current', async (req, res) => {
             if (!user) {
                 return res.status(404).json({ status: 'error', message: 'User not found' });
             }
+            req.userID = user._id;
 
             res.status(200).json({ status: 'success', payload: user });
         } catch (error) {

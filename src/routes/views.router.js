@@ -1,9 +1,5 @@
 import { Router } from "express";
-import Cart from "../dao/dbManagers/cart.js";
-import { userModel } from '../dao/models/users.js';
-
-const cartManager = new Cart();
-const userManager = new userModel();
+import ShoppingCart from "../dao/models/ShoppingCart.js"; // Importa el modelo ShoppingCart
 
 const router = Router();
 
@@ -15,15 +11,17 @@ router.post('/register', async (req, res) => {
     try {
         const { first_name, last_name, email, age, password } = req.body;
 
-        const newUser = {
+        // Crea un nuevo usuario con los datos proporcionados
+        const newUser = new userModel({
             first_name,
             last_name,
             email,
             age,
             password
-        };
+        });
 
-        await userManager.saveUser(newUser);
+        // Guarda el nuevo usuario en la base de datos
+        await newUser.save();
         res.redirect('/');
 
     } catch (error) {
@@ -33,15 +31,30 @@ router.post('/register', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-    let users = await userManager.getAll();
-    console.log(users);
-    res.render('users', { users });
+    try {
+        const users = await userModel.find();
+        console.log(users);
+        res.render('users', { users });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error al obtener los usuarios');
+    }
 });
 
 router.get('/cart', async (req, res) => {
-    let cartProducts = await cartManager.getCartProducts();
-    console.log(cartProducts);
-    res.render('cart', { cartProducts });
+    try {
+        const userId = req.userId; // Supongo que tienes esta propiedad userId definida en otro lugar
+
+        const cart = await ShoppingCart.findOne({ userId }).populate('products');
+        if (!cart) {
+            return res.status(404).json({ status: "error", message: "Cart not found" });
+        }
+
+        res.status(200).render("cart", { cartProducts: cart.products });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error at loading the cart');
+    }
 });
 
 export default router;

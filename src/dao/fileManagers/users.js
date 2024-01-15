@@ -1,44 +1,45 @@
 import fs from 'fs';
+import { join } from 'path';
 import __dirname from '../../utils.js';
 
-const path = __dirname + '/files/users.json';
+const filePath = join(__dirname, '/files/users.json');
 
-export default class Users {
+export default class UserDAO {
     constructor() {
-        console.log(`Trabajando en el archivo ${path}`);
+        console.log(`Trabajando en el archivo ${filePath}`);
     }
 
-    getAll = async () => {
-        if (fs.existsSync(path)) {
-            try {
-                let data = await fs.promises.readFile(path, 'utf8');
+    async getAll() {
+        try {
+            if (fs.existsSync(filePath)) {
+                const data = await fs.promises.readFile(filePath, 'utf8');
                 return JSON.parse(data);
-            } catch (error) {
-                console.log("No se pudo leer el archivo: " + error);
-                return null;
+            } else {
+                return [];
             }
-        } else {
-            return [];
+        } catch (error) {
+            console.error("No se pudo leer el archivo:", error);
+            throw error;
         }
     }
 
-    saveUser = async (user) => {
+    async save(user) {
         try {
             user.cart = [];
             let users = await this.getAll();
-            if (users.length === 0) {
-                user.id = 1;
-                users.push(user);
-                await fs.promises.writeFile(path, JSON.stringify(users, null, '\t'));
-            } else {
-                user.id = users[users.length - 1].id + 1;
-                users.push(user);
-                await fs.promises.writeFile(path, JSON.stringify(users, null, '\t'));
-            }
-            return user;
+
+            const newUser = {
+                id: users.length > 0 ? users[users.length - 1].id + 1 : 1,
+                ...user,
+            };
+
+            users.push(newUser);
+
+            await fs.promises.writeFile(filePath, JSON.stringify(users, null, '\t'));
+            return newUser;
         } catch (error) {
-            console.log("No se pudo guardar el archivo: " + error);
-            return null;
+            console.error("No se pudo guardar el archivo:", error);
+            throw error;
         }
     }
 }

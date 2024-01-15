@@ -1,6 +1,5 @@
-import mongoose from "mongoose";
 
-const userCollection = 'users';
+import mongoose from "mongoose";
 
 const userSchema = mongoose.Schema({
     first_name: {
@@ -33,7 +32,7 @@ const userSchema = mongoose.Schema({
         required: true
     },
     cart: {
-        type: mongoose.SchemaTypes.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'ShoppingCart'
     },
     role: {

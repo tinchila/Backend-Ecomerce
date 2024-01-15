@@ -1,5 +1,5 @@
 import { Router } from "express";
-import ShoppingCart from "../dao/models/ShoppingCart.js"; // Importa el modelo ShoppingCart
+import ShoppingCart from "../dao/models/ShoppingCart.js";
 
 const router = Router();
 
@@ -11,7 +11,6 @@ router.post('/register', async (req, res) => {
     try {
         const { first_name, last_name, email, age, password } = req.body;
 
-        // Crea un nuevo usuario con los datos proporcionados
         const newUser = new userModel({
             first_name,
             last_name,
@@ -20,7 +19,6 @@ router.post('/register', async (req, res) => {
             password
         });
 
-        // Guarda el nuevo usuario en la base de datos
         await newUser.save();
         res.redirect('/');
 
@@ -43,7 +41,7 @@ router.get('/', async (req, res) => {
 
 router.get('/cart', async (req, res) => {
     try {
-        const userId = req.userId; // Supongo que tienes esta propiedad userId definida en otro lugar
+        const userId = req.userId;
 
         const cart = await ShoppingCart.findOne({ userId }).populate('products');
         if (!cart) {

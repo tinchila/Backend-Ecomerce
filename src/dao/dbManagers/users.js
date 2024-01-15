@@ -1,3 +1,4 @@
+
 import { userModel } from "../models/users.js";
 
 export default class Users {
@@ -16,7 +17,7 @@ export default class Users {
     }
 
     getById = async (param) => {
-        let result = await userModel.findOne(param).populate('cart').lean(); // Modifica 'courses' por 'cart' para obtener el carrito de compras
+        let result = await userModel.findOne(param).populate('cart').lean();
         return result;
     }
 
@@ -25,4 +26,6 @@ export default class Users {
         let result = await userModel.updateOne({ _id: id }, { $set: user });
         return result;
     }
+
 }
+

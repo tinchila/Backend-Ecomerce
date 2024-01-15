@@ -49,13 +49,31 @@ router.get('/current', async (req, res) => {
             if (!user) {
                 return res.status(404).json({ status: 'error', message: 'User not found' });
             }
-            req.userID = user._id;
+            const userDTO = {
+                id: user._id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: user.email,
+                role: user.role,
+            };
 
-            res.status(200).json({ status: 'success', payload: user });
+            res.status(200).json({ status: 'success', payload: userDTO });
         } catch (error) {
             res.status(500).json({ status: 'error', message: 'Internal server error' });
         }
     });
+});
+
+const isAdmin = (req, res, next) => {
+    if (req.user && req.user.role === 'admin') {
+        next();
+    } else {
+        res.status(403).json({ status: 'error', message: 'Forbidden. Admin access required.' });
+    }
+};
+
+router.post('/admin/endpoint', isAdmin, (req, res) => {
+    res.status(200).json({ status: 'success', message: 'Admin endpoint accessed successfully' });
 });
 
 export default router;

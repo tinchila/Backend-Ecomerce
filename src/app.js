@@ -1,4 +1,4 @@
-import express  from "express";
+import express from "express";
 import __dirname from "./utils.js";
 import passport from "passport";
 import viewRouter from './routes/views.router.js'
@@ -9,12 +9,16 @@ import sessionRouter from './routes/session.router.js'
 import mongoose from "mongoose";
 import initializePassport from "./config/passport.config.js";
 import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
 
 const app =express();
-const PORT=8080;
+dotenv.config();
+
+const PORT = process.env.PORT || 8080;
+const MONGODB_URI = process.env.MONGODB_URI ||
 
 mongoose.set('strictQuery',false)
-const connection= mongoose.connect('mongodb+srv://tinchila:martindotto@cluster0.oz3qdxp.mongodb.net/admin');
+const connection = mongoose.connect(MONGODB_URI);
 
 app.engine('handlebars',handlebars.engine());
 app.set('views',__dirname+'/views')

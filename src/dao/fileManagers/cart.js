@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { join } from 'path';
+import join from 'path';
 import __dirname from '../../utils.js';
 
 const filePath = join(__dirname, '/files/products.json');

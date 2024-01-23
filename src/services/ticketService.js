@@ -1,4 +1,3 @@
-// services/ticketService.js
 import Ticket from '../dao/models/ticket.js';
 
 class TicketService {

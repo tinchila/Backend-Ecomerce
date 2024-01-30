@@ -10,22 +10,24 @@ import mongoose from "mongoose";
 import initializePassport from "./config/passport.config.js";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import mockingRouter from './routes/mockingRoutes.js';
+import Logger from './logger.js';
 
-const app =express();
+const app = express();
 dotenv.config();
 
 const PORT = process.env.PORT || 8080;
 const MONGODB_URI = process.env.MONGODB_URI ||
 
-mongoose.set('strictQuery',false)
+mongoose.set('strictQuery', false)
 const connection = mongoose.connect(MONGODB_URI);
 
-app.engine('handlebars',handlebars.engine());
-app.set('views',__dirname+'/views')
-app.set('view engine','handlebars')
+app.engine('handlebars', handlebars.engine());
+app.set('views', __dirname + '/views')
+app.set('view engine', 'handlebars')
 
 app.use(express.json())
-app.use(express.urlencoded({extended:true}))
+app.use(express.urlencoded({ extended: true }))
 
 initializePassport();
 app.use(passport.initialize())
@@ -34,5 +36,8 @@ app.use('/', viewRouter)
 app.use('/api/cart', cartRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/sessions', sessionRouter)
+app.use('/', mockingRouter);
 
-const server =app.listen(PORT, () => console.log("Server Arriba"))
+const server = app.listen(PORT, () => {
+    Logger.info(`Server running on port ${PORT}`);
+});

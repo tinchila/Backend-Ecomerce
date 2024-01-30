@@ -1,24 +1,26 @@
 import fs from 'fs';
-import join from 'path';
-import __dirname from '../../utils.js';
+import path from 'path';
+import Logger from '../../utils/logger.js';
 
-const filePath = join(__dirname, '/files/users.json');
+const filePath = path.join(__dirname, '/files/users.json');
 
 export default class UserDAO {
     constructor() {
-        console.log(`Trabajando en el archivo ${filePath}`);
+        Logger.info(`Trabajando en el archivo ${filePath}`);
     }
 
     async getAll() {
         try {
             if (fs.existsSync(filePath)) {
                 const data = await fs.promises.readFile(filePath, 'utf8');
+                Logger.info('Users retrieved successfully');
                 return JSON.parse(data);
             } else {
+                Logger.info('No existing file found, returning an empty array');
                 return [];
             }
         } catch (error) {
-            console.error("No se pudo leer el archivo:", error);
+            Logger.error('Error while reading the file:', error);
             throw error;
         }
     }
@@ -36,9 +38,10 @@ export default class UserDAO {
             users.push(newUser);
 
             await fs.promises.writeFile(filePath, JSON.stringify(users, null, '\t'));
+            Logger.info('User saved successfully');
             return newUser;
         } catch (error) {
-            console.error("No se pudo guardar el archivo:", error);
+            Logger.error('Error while saving the user:', error);
             throw error;
         }
     }

@@ -1,3 +1,4 @@
+import Logger from './logger.js';
 
 export const errorDictionary = {
     INCOMPLETE_DATA: "Incomplete data. Please provide all required fields.",
@@ -10,4 +11,6 @@ export const errorDictionary = {
 export const errorHandler = (errorKey, res) => {
     const errorMessage = errorDictionary[errorKey] || errorDictionary.INTERNAL_SERVER_ERROR;
     res.status(400).json({ status: 'error', message: errorMessage });
+
+    Logger.error(`Error occurred: ${errorMessage}`);
 };

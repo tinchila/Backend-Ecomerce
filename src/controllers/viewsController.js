@@ -1,6 +1,6 @@
-
-import ShoppingCart from "../dao/models/ShoppingCart.js";
+import ShoppingCart from '../dao/models/ShoppingCart.js';
 import userModel from '../dao/models/users.js';
+import Logger from '../utils/logger.js';
 
 export const renderRegisterView = (req, res) => {
     res.render('register');
@@ -19,10 +19,11 @@ export const registerUser = async (req, res) => {
         });
 
         await newUser.save();
+        Logger.info('User registered successfully');
         res.redirect('/');
 
     } catch (error) {
-        console.error(error);
+        Logger.error('Error while registering user', error);
         res.status(500).send('Error al registrar el usuario');
     }
 };
@@ -30,10 +31,10 @@ export const registerUser = async (req, res) => {
 export const renderUsersView = async (req, res) => {
     try {
         const users = await userModel.find();
-        console.log(users);
+        Logger.info('All users retrieved successfully');
         res.render('users', { users });
     } catch (error) {
-        console.error(error);
+        Logger.error('Error while getting users', error);
         res.status(500).send('Error al obtener los usuarios');
     }
 };
@@ -44,12 +45,14 @@ export const renderCartView = async (req, res) => {
 
         const cart = await ShoppingCart.findOne({ userId }).populate('products');
         if (!cart) {
-            return res.status(404).json({ status: "error", message: "Cart not found" });
+            Logger.error('Cart not found');
+            return res.status(404).json({ status: 'error', message: 'Cart not found' });
         }
 
-        res.status(200).render("cart", { cartProducts: cart.products });
+        Logger.info('Cart loaded successfully');
+        res.status(200).render('cart', { cartProducts: cart.products });
     } catch (error) {
-        console.error(error);
+        Logger.error('Error at loading the cart', error);
         res.status(500).send('Error at loading the cart');
     }
 };

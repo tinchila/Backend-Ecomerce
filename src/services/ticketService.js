@@ -1,4 +1,5 @@
 import Ticket from '../dao/models/ticket.js';
+import Logger from '../utils/logger.js';
 
 class TicketService {
     async createTicket({ amount, purchaser, products }) {
@@ -17,8 +18,11 @@ class TicketService {
 
             await ticket.save();
 
+            Logger.info('Ticket created successfully:', ticket);
+            
             return ticket;
         } catch (error) {
+            Logger.error('Error creating ticket:', error);
             throw error;
         }
     }

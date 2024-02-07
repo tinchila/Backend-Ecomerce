@@ -1,43 +1,67 @@
-import express from "express";
-import __dirname from "./utils.js";
-import passport from "passport";
-import viewRouter from './routes/views.router.js'
-import cartRouter from './routes/cart.router.js'
-import usersRouter from './routes/users.router.js'
-import handlebars from 'express-handlebars'
-import sessionRouter from './routes/session.router.js'
-import mongoose from "mongoose";
-import initializePassport from "./config/passport.config.js";
-import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
+import express from 'express';
+import mongoose from 'mongoose';
+import handlebars from 'express-handlebars';
+import passport from 'passport';
+import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
+import Logger from './utils/logger.js';
+import config from './config/config.js';
+import initializePassport from './config/passport.config.js';
+import viewRouter from './routes/views.router.js';
+import cartRouter from './routes/cart.router.js';
+import usersRouter from './routes/users.router.js';
+import sessionRouter from './routes/session.router.js';
 import mockingRouter from './routes/mockingRoutes.js';
-import Logger from './logger.js';
 
 const app = express();
 dotenv.config();
 
-const PORT = process.env.PORT || 8080;
-const MONGODB_URI = process.env.MONGODB_URI ||
+const PORT = config.mongo.PORT;
+const MONGODB_URI = process.env.MONGODB_URI;
 
-mongoose.set('strictQuery', false)
-const connection = mongoose.connect(MONGODB_URI);
+mongoose.set('strictQuery', false);
 
+//BD
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    Logger.info('Connected to the database');
+  })
+  .catch((error) => {
+    Logger.error('Error connecting to the database:', error);
+  });
+
+//Handlebars
 app.engine('handlebars', handlebars.engine());
-app.set('views', __dirname + '/views')
-app.set('view engine', 'handlebars')
+app.set('views', __dirname + '/views');
+app.set('view engine', 'handlebars');
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+//Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+//Passport
 initializePassport();
-app.use(passport.initialize())
-app.use(cookieParser())
-app.use('/', viewRouter)
-app.use('/api/cart', cartRouter)
-app.use('/api/users', usersRouter)
-app.use('/api/sessions', sessionRouter)
+app.use(passport.initialize());
+
+//Middleware for cookies
+app.use(cookieParser());
+
+//Routes
+app.use('/', viewRouter);
+app.use('/api/cart', cartRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/sessions', sessionRouter);
 app.use('/', mockingRouter);
 
-const server = app.listen(PORT, () => {
-    Logger.info(`Server running on port ${PORT}`);
+//Global error
+app.use((err, req, res, next) => {
+  Logger.error('Global error handler:', err);
+  res.status(500).json({ status: 'error', message: 'Internal Server Error' });
 });
+
+//Server
+const server = app.listen(PORT, () => {
+  Logger.info(`Server running on port ${PORT}`);
+});
+
+export default server;

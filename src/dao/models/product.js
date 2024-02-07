@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose';
 
 const productSchema = new mongoose.Schema({
@@ -13,6 +12,10 @@ const productSchema = new mongoose.Schema({
     price: {
         type: Number,
         required: true
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 });
 

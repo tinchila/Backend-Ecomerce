@@ -1,5 +1,4 @@
 import productModel from '../models/product.js';
-import ShoppingCartModel from '../models/ShoppingCart.js';
 import Logger from '../utils/logger.js';
 
 export default class Carts {

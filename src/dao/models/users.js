@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const userSchema = mongoose.Schema({
@@ -37,9 +36,15 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['user', 'admin'],
+        enum: ['user', 'admin', 'premium'],
         default: 'user'
-    }
+    },
+    passwordResetToken: {
+        type: String,
+    },
+    passwordResetExpires: {
+        type: Date,
+    },
 });
 
 const userModel = mongoose.model('User', userSchema);

@@ -12,12 +12,15 @@ import cartRouter from './routes/cart.router.js';
 import usersRouter from './routes/users.router.js';
 import sessionRouter from './routes/session.router.js';
 import mockingRouter from './routes/mockingRoutes.js';
+import swaggerUiExpress from 'swagger-ui-express';
+import swaggerSpec from './config/swaggerconfig.js';
 
 const app = express();
 dotenv.config();
 
+
 const PORT = config.mongo.PORT;
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = config.mongo.URL;
 
 mongoose.set('strictQuery', false);
 
@@ -58,6 +61,9 @@ app.use((err, req, res, next) => {
   Logger.error('Global error handler:', err);
   res.status(500).json({ status: 'error', message: 'Internal Server Error' });
 });
+
+// Swagger
+app.use('/api-docs', swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerSpec));
 
 //Server
 const server = app.listen(PORT, () => {

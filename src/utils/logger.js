@@ -1,5 +1,6 @@
 
 import winston from 'winston';
+import config from './config/config.js';
 
 const levels = {
   fatal: 0,
@@ -11,7 +12,7 @@ const levels = {
 };
 
 const level = () => {
-  const env = process.env.NODE_ENV || 'development';
+  const env = config.logger.ENV || 'development';
   const isDevelopment = env === 'development';
   return isDevelopment ? 'debug' : 'info';
 };
@@ -37,7 +38,7 @@ const format = winston.format.combine(
 
 const transports = [
   new winston.transports.Console(),
-  new winston.transports.File({ filename: process.env.ERROR_LOG_FILENAME || 'errors.log', level: 'error' })
+  new winston.transports.File({ filename: config.logger.ERR || 'errors.log', level: 'error' })
 ];
 
 const Logger = winston.createLogger({

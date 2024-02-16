@@ -6,7 +6,7 @@ export const authorize = (roles) => {
             const user = req.user;
             if (!user || !user.role || !roles.includes(user.role)) {
                 Logger.warning('Unauthorized access attempt');
-                return res.status(403).json({ status: 'error', message: 'Acceso no autorizado' });
+                return res.status(403).json({ status: 'error', message: 'Unauthorized access' });
             }
             next();
         } catch (error) {

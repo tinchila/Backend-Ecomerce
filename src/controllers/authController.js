@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import RecoveryToken from '../dao/models/recoveryToken.js';
 import User from '../dao/models/users.js';
 import MailService from '../services/mailService.js';
+import config from './config/config.js';
 
 const sendRecoveryEmail = async (req, res) => {
   try {
@@ -23,7 +24,7 @@ const sendRecoveryEmail = async (req, res) => {
 
     await recoveryToken.save();
 
-    const resetPasswordLink = `${process.env.BASE_URL}/reset-password/${token}`;
+    const resetPasswordLink = `${config.mailing.BASE}/reset-password/${token}`;
     const subject = 'Password Recovery';
     const htmlContent = `
       <p>Hello,</p>

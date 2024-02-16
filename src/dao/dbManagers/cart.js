@@ -3,7 +3,7 @@ import Logger from '../utils/logger.js';
 
 export default class Carts {
     constructor() {
-        Logger.info('Estamos trabajando con la base de datos MongoDB para carritos');
+        Logger.info('We are working with MongoDB data base for carts');
     }
 
     async getAll() {

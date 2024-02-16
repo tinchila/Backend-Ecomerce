@@ -1,11 +1,12 @@
 import nodemailer from 'nodemailer';
 import dotenv from "dotenv";
 import Logger from '../utils/logger.js';
+import config from './config/config.js';
 
 dotenv.config();
 
-const MAILING_PASSWORD = process.env.MAILING_PASSWORD;
-const MAILING_USER = process.env.MAILING_USER;
+const MAILING_PASSWORD = config.mailing.MAILING_PASSWORD;
+const MAILING_USER = config.mailing.MAILING_USER;
 
 class MailService {
     constructor() {
@@ -39,7 +40,7 @@ class MailService {
         const htmlContent = `
             <p>Hello,</p>
             <p>You have requested to reset your password. Click on the following link to reset it:</p>
-            <a href="${process.env.BASE_URL}/reset-password/${resetToken}">Reset Password</a>
+            <a href="${config.mailing.BASE}/reset-password/${resetToken}">Reset Password</a>
             <p>If you did not request this, please ignore this email.</p>
         `;
         

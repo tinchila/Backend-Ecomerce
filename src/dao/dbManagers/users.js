@@ -3,7 +3,7 @@ import Logger from '../utils/logger.js';
 
 export default class Users {
     constructor() {
-        Logger.info('Trabajando con Mongo');
+        Logger.info('Working with Mongo');
     }
 
     getAll = async () => {

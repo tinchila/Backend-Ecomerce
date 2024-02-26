@@ -1,7 +1,7 @@
 import userModel from '../dao/models/users.js';
 import createHash from '../utils/utils.js';
 import Logger from '../utils/logger.js';
-import MailService from '../services/mailService';
+import MailService from '../services/mailService.js';
 import { errorDictionary, errorHandler } from '../utils/errorHandler.js';
 
 export const getAllUsers = async (req, res) => {

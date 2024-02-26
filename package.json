@@ -26,5 +26,11 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "chai": "^5.1.0",
+    "jest": "^29.7.0",
+    "mocha": "^10.3.0",
+    "supertest": "^6.3.4"
   }
 }

@@ -14,6 +14,7 @@ import sessionRouter from './routes/session.router.js';
 import mockingRouter from './routes/mockingRoutes.js';
 import swaggerUiExpress from 'swagger-ui-express';
 import swaggerSpec from './config/swaggerconfig.js';
+import __dirname from './utils/utils.js';
 
 const app = express();
 dotenv.config();

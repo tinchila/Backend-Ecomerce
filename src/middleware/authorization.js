@@ -1,6 +1,6 @@
 import Logger from '../utils/logger.js';
 
-export const authorize = (roles) => {
+const authorize = (roles) => {
     return (req, res, next) => {
         try {
             const user = req.user;
@@ -15,3 +15,5 @@ export const authorize = (roles) => {
         }
     };
 };
+
+export default authorize;

@@ -37,7 +37,7 @@ const format = winston.format.combine(
 );
 
 const transports = [
-  new winston.transports.Console(),
+  new winston.transports.Console({ level: 'http'}),
   new winston.transports.File({ filename: config.logger.ERR || 'errors.log', level: 'error' })
 ];
 

@@ -24,7 +24,7 @@ const userSchema = mongoose.Schema({
         type: String
     },
     birthDate: {
-        type: Number
+        type: Date
     },
     password: {
         type: String,
@@ -45,6 +45,20 @@ const userSchema = mongoose.Schema({
     passwordResetExpires: {
         type: Date,
     },
+    documents: [{
+        name: {
+            type: String,
+            required: true
+        },
+        reference: {
+            type: String,
+            required: true
+        }
+    }],
+    last_connection: {
+        type: Date,
+        default: Date.now
+    }
 });
 
 const userModel = mongoose.model('User', userSchema);

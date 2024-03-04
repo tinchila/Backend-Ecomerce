@@ -1,11 +1,12 @@
-import chai, { expect } from 'chai';
+import { use, expect } from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../app.js';
 import supertest from 'supertest';
 import { describe, it, before, after } from 'mocha';
 
+const server = use("chai-http")
 chai.use(chaiHttp);
-const expect = chai.expect;
+const { expect } = chai;
 const request = supertest(server);
 
 let userToken = '';

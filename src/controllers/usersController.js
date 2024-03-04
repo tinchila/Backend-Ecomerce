@@ -11,7 +11,6 @@ export const getAllUsers = async (req, res) => {
     } catch (error) {
         Logger.error(`Error getting all users: ${error.message}`);
         errorHandler(errorDictionary.INTERNAL_SERVER_ERROR, res);
-        return;
     }
 };
 
@@ -49,7 +48,6 @@ export const registerUser = async (req, res) => {
     } catch (error) {
         Logger.error(`Error registering user: ${error.message}`);
         errorHandler(errorDictionary.INTERNAL_SERVER_ERROR, res);
-        return;
     }
 };
 
@@ -72,6 +70,21 @@ export const changeUserRole = async (req, res) => {
             return;
         }
 
+        if (newRole === 'premium') {
+            const requiredDocuments = ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
+            const uploadedDocumentNames = user.documents.map(doc => doc.name);
+
+            const hasAllRequiredDocuments = requiredDocuments.every(requiredDoc => uploadedDocumentNames.includes(requiredDoc));
+
+            if (!hasAllRequiredDocuments) {
+                Logger.error('User has not uploaded all required documents for premium status');
+                return res.status(400).json({
+                    status: 'error',
+                    message: 'User has not uploaded all required documents for premium status.'
+                });
+            }
+        }
+
         if (req.user.role !== 'admin' && req.user._id.toString() !== uid) {
             Logger.error('Unauthorized to change user role');
             errorHandler(errorDictionary.UNAUTHORIZED_ACCESS, res);
@@ -86,6 +99,34 @@ export const changeUserRole = async (req, res) => {
     } catch (error) {
         Logger.error(`Error changing user role: ${error.message}`);
         errorHandler(errorDictionary.INTERNAL_SERVER_ERROR, res);
-        return;
+    }
+};
+
+export const addDocumentToUser = async (req, res) => {
+    try {
+        const userId = req.params.uid;
+        const files = req.files;
+
+        if (!files || files.length === 0) {
+            Logger.error('No documents uploaded');
+            errorHandler(errorDictionary.INVALID_PARAMETERS, res);
+            return;
+        }
+
+        const documents = files.map(file => ({
+            name: file.originalname,
+            reference: file.path
+        }));
+
+        await userModel.findByIdAndUpdate(userId, { 
+            $push: { documents: { $each: documents } }, 
+            $set: { last_connection: new Date() } 
+        });
+
+        Logger.info('Documents uploaded successfully');
+        res.status(200).json({ status: 'success', message: 'Documents uploaded successfully.' });
+    } catch (error) {
+        Logger.error(`Error uploading documents: ${error.message}`);
+        errorHandler(errorDictionary.INTERNAL_SERVER_ERROR, res);
     }
 };

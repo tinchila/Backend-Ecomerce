@@ -1,9 +1,10 @@
-import chai from 'chai';
+import { use, expect } from 'chai';
 import chaiHttp from 'chai-http';
-import server from '../../app.js';
+import app from '../../app.js';
 import User from '../../dao/models/users.js';
 import RecoveryToken from '../../dao/models/recoveryToken.js';
 
+const server = use("chai-http")
 chai.use(chaiHttp);
 const { expect } = chai;
 
@@ -21,7 +22,7 @@ describe('Auth Routes', () => {
                     done(err);
                     return;
                 }
-                chai.request(server)
+                server.request(app)
                     .post('/recover')
                     .send({ email: 'test@example.com' })
                     .end((err, res) => {
@@ -35,7 +36,7 @@ describe('Auth Routes', () => {
         });
 
         it('it should return an error for a non-existent user email', (done) => {
-            chai.request(server)
+            server.request(app)
                 .post('/recover')
                 .send({ email: 'nonexistent@example.com' })
                 .end((err, res) => {

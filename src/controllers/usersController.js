@@ -1,5 +1,5 @@
 import userModel from '../dao/models/users.js';
-import createHash from '../utils/utils.js';
+import { createHash } from '../utils/utils.js';
 import Logger from '../utils/logger.js';
 import MailService from '../services/mailService.js';
 import { errorDictionary, errorHandler } from '../utils/errorHandler.js';
@@ -113,20 +113,25 @@ export const addDocumentToUser = async (req, res) => {
             return;
         }
 
-        const documents = files.map(file => ({
+        const filesArray = Array.isArray(files) ? files : [files];
+
+        const documents = filesArray.map((file) => ({
             name: file.originalname,
-            reference: file.path
+            reference: file.path,
         }));
-
-        await userModel.findByIdAndUpdate(userId, { 
-            $push: { documents: { $each: documents } }, 
-            $set: { last_connection: new Date() } 
+ 
+ 
+        await userModel.findByIdAndUpdate(userId, {
+            $push: { documents: { $each: documents } },
+            $set: { last_connection: new Date() },
         });
-
-        Logger.info('Documents uploaded successfully');
-        res.status(200).json({ status: 'success', message: 'Documents uploaded successfully.' });
+        Logger.info("Documents uploaded successfully");
+        res
+            .status(200)
+            .json({ status: "success", message: "Documents uploaded successfully." });
     } catch (error) {
         Logger.error(`Error uploading documents: ${error.message}`);
         errorHandler(errorDictionary.INTERNAL_SERVER_ERROR, res);
     }
-};
+ };
+ 

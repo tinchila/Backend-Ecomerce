@@ -1,6 +1,9 @@
 import dotenv from 'dotenv';
+import path from 'path';
+import __dirname from '../utils/utils.js';
 
-dotenv.config()
+const envFilePath = path.join(__dirname, "..", ".env");
+dotenv.config({ path: envFilePath });
 
 export default {
     mongo:{
@@ -18,4 +21,4 @@ export default {
         ENV: process.env.NODE_ENV,
         ERR: process.env.ERROR_LOG_FILENAME
     }
-}
+};

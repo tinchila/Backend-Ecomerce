@@ -14,7 +14,7 @@ paths:
     get:
       summary: Get All Products
       responses:
-        '200':
+        "200":
           description: List of products
           content:
             application/json:
@@ -61,7 +61,7 @@ paths:
                   type: string
                   description: The ID of the product owner (user)
       responses:
-        '201':
+        "201":
           description: Product created successfully
           content:
             application/json:
@@ -98,7 +98,7 @@ paths:
           required: true
           description: The ID of the product to retrieve
       responses:
-        '200':
+        "200":
           description: Product retrieved successfully
           content:
             application/json:
@@ -121,7 +121,7 @@ paths:
                         type: number
                       owner:
                         type: string
-        '404':
+        "404":
           description: Product not found
           content:
             application/json:
@@ -160,7 +160,7 @@ paths:
                   type: number
                   description: The updated price of the product
       responses:
-        '200':
+        "200":
           description: Product updated successfully
           content:
             application/json:
@@ -196,7 +196,7 @@ paths:
           required: true
           description: The ID of the product to delete
       responses:
-        '200':
+        "200":
           description: Product deleted successfully
           content:
             application/json:
@@ -209,7 +209,7 @@ paths:
                   message:
                     type: string
                     example: Product deleted successfully
-        '404':
+        "404":
           description: Product not found
           content:
             application/json:

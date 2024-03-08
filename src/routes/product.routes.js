@@ -1,6 +1,6 @@
 
 import express from 'express';
-import { deleteProduct } from '../controllers/product.controller.js';
+import { deleteProduct } from '../controllers/productController.js';
 import authorize from '../middleware/authorization.js';
 import MailService from '../services/mailService.js';
 

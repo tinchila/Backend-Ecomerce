@@ -12,6 +12,7 @@ import cartRouter from './routes/cart.router.js';
 import usersRouter from './routes/users.router.js';
 import sessionRouter from './routes/session.router.js';
 import mockingRouter from './routes/mockingRoutes.js';
+import orderRouter from './routes/order.routes.js';
 import swaggerUiExpress from 'swagger-ui-express';
 import swaggerSpec from './config/swaggerconfig.js';
 import __dirname from './utils/utils.js';
@@ -55,7 +56,9 @@ app.use('/', viewRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/sessions', sessionRouter);
+app.use('/api/products', productRouter);
 app.use('/', mockingRouter);
+app.use('/api/orders', orderRouter);
 
 //Global error
 app.use((err, req, res, next) => {

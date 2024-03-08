@@ -1,6 +1,8 @@
 import Product from '../dao/models/product.js';
 import Logger from '../utils/logger.js';
 import { errorDictionary, errorHandler } from '../utils/errorHandler.js';
+import { sendEmail } from '../services/mailService.js';
+import User from '../dao/models/users.js';
 
 export const getAllProducts = async (req, res) => {
     try {
@@ -83,13 +85,18 @@ export const deleteProduct = async (req, res) => {
             errorHandler(errorDictionary.PRODUCT_NOT_FOUND, res);
             return;
         }
+        const owner = await User.findOne({ email: product.owner });
 
-        if (product.owner !== req.user.email) {
-            Logger.warning('Unauthorized access to delete product');
-            errorHandler(errorDictionary.UNAUTHORIZED_ACCESS, res);
+        if (!owner) {
+            Logger.error(`Owner not found for the product with ID: ${productId}`);
+            errorHandler(errorDictionary.OWNER_NOT_FOUND, res);
             return;
         }
 
+        if (owner.isPremium) {
+            sendEmail(owner.email, "Product Deleted", "Your product has been deleted.");
+        }
+        
         await product.remove();
         Logger.info(`Product deleted successfully: ${product}`);
         res.status(200).json({ status: 'success', message: 'Product deleted successfully' });

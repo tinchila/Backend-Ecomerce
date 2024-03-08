@@ -3,10 +3,11 @@ import { createHash } from '../utils/utils.js';
 import Logger from '../utils/logger.js';
 import MailService from '../services/mailService.js';
 import { errorDictionary, errorHandler } from '../utils/errorHandler.js';
+import moment from 'moment';
 
 export const getAllUsers = async (req, res) => {
     try {
-        const users = await userModel.find();
+        const users = await userModel.find({}, 'first_name last_name email role');
         res.status(200).json({ status: 'success', payload: users });
     } catch (error) {
         Logger.error(`Error getting all users: ${error.message}`);
@@ -135,3 +136,40 @@ export const addDocumentToUser = async (req, res) => {
     }
  };
  
+ export const getMainUserData = async (req, res) => {
+    try {
+        const users = await userModel.find({}, 'first_name last_name email role -_id');
+        res.status(200).json({ status: 'success', payload: users });
+    } catch (error) {
+        Logger.error(`Error getting main user data: ${error.message}`);
+        errorHandler(errorDictionary.INTERNAL_SERVER_ERROR, res);
+    }
+};
+
+export const deleteInactiveUsers = async (req, res) => {
+    try {
+        const thresholdDate = moment().subtract(30, 'minutes').toDate();
+        const inactiveUsers = await userModel.find({ last_connection: { $lt: thresholdDate } });
+
+        if (inactiveUsers.length > 0) {
+            const inactiveUserEmails = inactiveUsers.map(user => user.email);
+            await userModel.deleteMany({ _id: { $in: inactiveUsers.map(user => user._id) } });
+
+            inactiveUserEmails.forEach(email => {
+                MailService.sendMail(
+                    email,
+                    "Account Deletion Notice",
+                    "Your account has been deleted due to inactivity."
+                );
+            });
+
+            Logger.info(`Deleted ${inactiveUsers.length} inactive users.`);
+            res.status(200).json({ status: 'success', message: `Deleted ${inactiveUsers.length} inactive users.` });
+        } else {
+            res.status(200).json({ status: 'success', message: "No inactive users found to delete." });
+        }
+    } catch (error) {
+        Logger.error(`Error deleting inactive users: ${error.message}`);
+        errorHandler(errorDictionary.INTERNAL_SERVER_ERROR, res);
+    }
+};

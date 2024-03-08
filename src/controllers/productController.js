@@ -1,7 +1,7 @@
 import Product from '../dao/models/product.js';
 import Logger from '../utils/logger.js';
 import { errorDictionary, errorHandler } from '../utils/errorHandler.js';
-import { sendEmail } from '../services/mailService.js';
+import mailService from '../services/mailService.js';
 import User from '../dao/models/users.js';
 
 export const getAllProducts = async (req, res) => {
@@ -94,9 +94,9 @@ export const deleteProduct = async (req, res) => {
         }
 
         if (owner.isPremium) {
-            sendEmail(owner.email, "Product Deleted", "Your product has been deleted.");
+            await mailService.sendMail(owner.email, "Product Deleted", "Your product has been deleted.");
         }
-        
+
         await product.remove();
         Logger.info(`Product deleted successfully: ${product}`);
         res.status(200).json({ status: 'success', message: 'Product deleted successfully' });

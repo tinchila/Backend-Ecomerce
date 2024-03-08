@@ -1,10 +1,10 @@
 
 import express from 'express';
 import { createOrder } from '../controllers/orderController.js';
-import { isAuthenticated } from '../middleware/authorization.js';
+import { authorize } from '../middleware/authorization.js';
 
 const router = express.Router();
 
-router.post('/', isAuthenticated, createOrder);
+router.post('/', authorize, createOrder);
 
 export default router;

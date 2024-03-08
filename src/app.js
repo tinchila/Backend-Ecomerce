@@ -13,6 +13,7 @@ import usersRouter from './routes/users.router.js';
 import sessionRouter from './routes/session.router.js';
 import mockingRouter from './routes/mockingRoutes.js';
 import orderRouter from './routes/order.routes.js';
+import productRouter from './routes/product.routes.js';
 import swaggerUiExpress from 'swagger-ui-express';
 import swaggerSpec from './config/swaggerconfig.js';
 import __dirname from './utils/utils.js';

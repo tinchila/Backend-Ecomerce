@@ -1,6 +1,6 @@
 import Logger from '../utils/logger.js';
 
-const authorize = (roles) => {
+const isAuthenticated = (roles) => {
     return (req, res, next) => {
         try {
             const user = req.user;
